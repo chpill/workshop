@@ -1,5 +1,6 @@
 
-var fs = require('fs');
+var fs = require('fs'),
+    thunkify = require('thunkify');
 
 /**
  * Create a yieldable version of `fs.stat()`:
@@ -12,8 +13,17 @@ var fs = require('fs');
  */
 
 exports.stat = function (filename) {
+  return function (done){
+    fs.stat(filename, function(err, stats){
+      done(err, stats);
+    })
+  };
 
 };
+
+// Let's check out thunkify... This works!
+//exports.stat = thunkify(fs.stat);
+
 
 /**
  * Create a yieldable version of `fs.exists()`:
@@ -32,5 +42,15 @@ exports.stat = function (filename) {
  */
 
 exports.exists = function (filename) {
-
+  return function(done){
+    fs.stat(filename, function(err, _){
+      if (err)
+        done (null, false);
+      else
+        done(null, true);
+    });
+  };
 };
+
+// This does not work, the previous notice was true...
+//exports.exists = thunkify(fs.exists);

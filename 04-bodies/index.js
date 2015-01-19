@@ -12,7 +12,7 @@ var app = module.exports = koa();
 app.use(function* (next) {
   if (this.request.path !== '/stream') return yield* next;
 
-  this.response.type = '/application\\/javascript/'
+  this.response.type = '/application/javascript/'
   this.response.body = fs.createReadStream(__filename);
 });
 
